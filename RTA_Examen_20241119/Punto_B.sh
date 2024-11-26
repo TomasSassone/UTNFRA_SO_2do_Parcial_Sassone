@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Nombre del archivo de salida con tu apellido
+script_destino="/usr/local/bin/$(whoami)AltaUser-Groups.sh"
+
+# Crear el contenido del script AltaUser-Groups.sh
+echo "#!/bin/bash" > "$script_destino"
+echo "" >> "$script_destino"
+echo "# Verificar que se proporcionaron los parámetros requeridos" >> "$script_destino"
+echo "if [ \"\$#\" -ne 2 ]; then" >> "$script_destino"
+echo "    echo \"Uso: \$0 <usuario_origen> <archivo_lista_usuarios>\"" >> "$script_destino"
+echo "    exit 1" >> "$script_destino"
+echo "fi" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "# Parametros de entrada" >> "$script_destino"
+echo "usuario_origen=\$1" >> "$script_destino"
+echo "archivo_lista=\$2" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "# Verificar si el archivo de lista existe" >> "$script_destino"
+echo "if [ ! -f \"\$archivo_lista\" ]; then" >> "$script_destino"
+echo "    echo \"El archivo \$archivo_lista no existe.\"" >> "$script_destino"
+echo "    exit 1" >> "$script_destino"
+echo "fi" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "# Obtener la contraseña del usuario origen" >> "$script_destino"
+echo "clave_origen=\$(passwd -S \$usuario_origen | awk '{print \$2}')" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "if [ \"\$clave_origen\" != \"P\" ]; then" >> "$script_destino"
+echo "    echo \"El usuario \$usuario_origen no tiene una contraseña establecida o está bloqueado.\"" >> "$script_destino"
+echo "    exit 1" >> "$script_destino"
+echo "fi" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "# Crear los grupos y usuarios desde el archivo de lista" >> "$script_destino"
+echo "while IFS= read -r linea" >> "$script_destino"
+echo "do" >> "$script_destino"
+echo "    # Crear el grupo" >> "$script_destino"
+echo "    groupadd \"\$linea\"" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "    # Crear el usuario" >> "$script_destino"
+echo "    useradd -m -g \"\$linea\" \"\$linea\"" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "    # Asignar la contraseña del usuario origen" >> "$script_destino"
+echo "    echo \"\$linea:\$clave_origen\" | chpasswd" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "    echo \"Grupo y usuario \$linea creados con éxito y con la contraseña de \$usuario_origen\"" >> "$script_destino"
+echo "done < \"\$archivo_lista\"" >> "$script_destino"
+echo "" >> "$script_destino"
+echo "# Fin del script" >> "$script_destino"
+echo "exit 0" >> "$script_destino"
+
+# Dar permisos de ejecución al script creado
+chmod +x "$script_destino"
+
+# Mensaje indicando que el script fue creado exitosamente
+echo "El script para la creación de usuarios y grupos ha sido creado en: $script_destino"
+
