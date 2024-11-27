@@ -2,8 +2,8 @@
 
 # Variables
 CONTAINER_NAME="nginx-container"
-IMAGE_NAME="web1-sassone"  # Cambiar <Tu-Apellido> por tu apellido
-DOCKER_HUB_USER="tusuario" # Cambiar por tu usuario en Docker Hub
+IMAGE_NAME="web1-sassone"
+DOCKER_HUB_USER="tusuario"
 DOCKERFILE_DIR="/home/tomas/UTN-FRA_SO_Examenes/202406/docker"
 
 # Eliminar contenedor existente (si lo hay)
